@@ -1,0 +1,13 @@
+mutation signIn($username:String!,$password:String!){
+  logIn(input:{
+    username:$username,
+    password:$password
+  }){
+    viewer{
+      user{
+        ...UserFragment
+      }
+      sessionToken
+    }
+  }
+}
