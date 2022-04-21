@@ -1,27 +1,28 @@
 <script lang="ts">
-  import { Col, Container, Row, Card, CardBody, Form, FormGroup, Input, Button } from "sveltestrap";
+  import { Col, Container, Row, Card, CardBody, Form, FormGroup, Input, Button, Spinner } from "sveltestrap";
   import { form, field } from "svelte-forms";
-  import { required, min,matchField } from "svelte-forms/validators";
+  import { required, min, matchField } from "svelte-forms/validators";
   import { capitalize } from "lodash-es";
   import { onMount } from "svelte";
   import { customValidator } from "$lib/utils/form-validators";
   import { t } from "$lib/i18n/translation";
+  import { reqSignUp } from "$lib/services/auth-service";
   import Avatar from "./Avatar.svelte";
+import { showSnackbar } from "$lib/services/snackbar-service";
 
   const username = field("username", "", [required(), customValidator(min(4), $t("validation.min", { min: 4 }))]);
   const password = field("password", "", [required(), customValidator(min(8), $t("validation.min", { min: 8 }))]);
-  const passwordConfirm = field("passwordConfirm", "", [   
-    customValidator(matchField(password), $t("validation.passwordMatch")),
-  ]);
+  const passwordConfirm = field("passwordConfirm", "", [customValidator(matchField(password), $t("validation.passwordMatch"))]);
   const pform = form(username, password);
+
+  let sending = false;
 
   let fileInput;
   let imageBase64 = "";
 
   onMount(() => {
     pform.validate();
-    password.subscribe(v=>passwordConfirm.validate())
-   
+    password.subscribe((v) => passwordConfirm.validate());
   });
 
   const onFileSelected = (e) => {
@@ -33,9 +34,16 @@
     };
   };
 
-  async function submit() {
+  async function submit() {    
     await pform.validate();
-    if (!$pform.valid) return;
+    if ($pform.valid) {
+      sending = true;
+      let res = await reqSignUp($username.value, $password.value, imageBase64);
+      sending = false;
+      if(res.error){
+        showSnackbar(res.error)
+      }
+    }
   }
 </script>
 
@@ -80,8 +88,12 @@
                     feedback={$passwordConfirm.errors.map((v) => capitalize(v))}
                   />
                 </FormGroup>
-                <div style="display: flex;align-items: center;">
-                  <Button disabled={!$pform.valid} on:click={submit} type="button" color="primary" style="margin: auto;">Sign-Up</Button>
+                <div class="center">
+                  {#if sending}
+                    <Spinner color="primary" />
+                  {:else}
+                    <Button disabled={!$pform.valid} on:click={submit} type="button" color="primary" style="margin: auto;">Sign-Up</Button>
+                  {/if}
                 </div>
               </Form>
             </CardBody>

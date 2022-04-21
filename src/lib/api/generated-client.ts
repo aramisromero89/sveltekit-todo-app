@@ -1406,14 +1406,14 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', logIn?: { __typename?: 'LogInPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
-export type SignupMutationVariables = Exact<{
+export type SignUpMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
   avatar?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
+export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
@@ -1434,8 +1434,8 @@ export const SignInDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
-export const SignupDoc = gql`
-    mutation signup($username: String!, $password: String!, $avatar: String) {
+export const SignUpDoc = gql`
+    mutation signUp($username: String!, $password: String!, $avatar: String) {
   signUp(
     input: {fields: {username: $username, password: $password, avatar: $avatar}}
   ) {
@@ -1460,14 +1460,14 @@ export const signIn = (
             });
             return m;
           }
-export const signup = (
+export const signUp = (
             options: Omit<
-              MutationOptions<any, SignupMutationVariables>, 
+              MutationOptions<any, SignUpMutationVariables>, 
               "mutation"
             >
           ) => {
-            const m = client.mutate<SignupMutation, SignupMutationVariables>({
-              mutation: SignupDoc,
+            const m = client.mutate<SignUpMutation, SignUpMutationVariables>({
+              mutation: SignUpDoc,
               ...options,
             });
             return m;
