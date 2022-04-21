@@ -175,6 +175,7 @@ export type CreateTaskPayload = {
 export type CreateUserFieldsInput = {
   ACL?: InputMaybe<AclInput>;
   authData?: InputMaybe<Scalars['Object']>;
+  avatar?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
   emailVerified?: InputMaybe<Scalars['Boolean']>;
   password: Scalars['String'];
@@ -1242,6 +1243,7 @@ export type UpdateTaskPayload = {
 export type UpdateUserFieldsInput = {
   ACL?: InputMaybe<AclInput>;
   authData?: InputMaybe<Scalars['Object']>;
+  avatar?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
   emailVerified?: InputMaybe<Scalars['Boolean']>;
   password?: InputMaybe<Scalars['String']>;
@@ -1265,6 +1267,7 @@ export type User = Node & ParseObject & {
   __typename?: 'User';
   ACL: Acl;
   authData?: Maybe<Scalars['Object']>;
+  avatar?: Maybe<Scalars['String']>;
   createdAt: Scalars['Date'];
   email?: Maybe<Scalars['String']>;
   emailVerified?: Maybe<Scalars['Boolean']>;
@@ -1315,6 +1318,7 @@ export type UserEdge = {
 
 export type UserLoginWithInput = {
   ACL?: InputMaybe<AclInput>;
+  avatar?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
   emailVerified?: InputMaybe<Scalars['Boolean']>;
   tasks?: InputMaybe<TaskRelationInput>;
@@ -1325,6 +1329,8 @@ export enum UserOrder {
   AclDesc = 'ACL_DESC',
   AuthDataAsc = 'authData_ASC',
   AuthDataDesc = 'authData_DESC',
+  AvatarAsc = 'avatar_ASC',
+  AvatarDesc = 'avatar_DESC',
   CreatedAtAsc = 'createdAt_ASC',
   CreatedAtDesc = 'createdAt_DESC',
   EmailVerifiedAsc = 'emailVerified_ASC',
@@ -1368,6 +1374,7 @@ export type UserWhereInput = {
   NOR?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
   authData?: InputMaybe<ObjectWhereInput>;
+  avatar?: InputMaybe<StringWhereInput>;
   createdAt?: InputMaybe<DateWhereInput>;
   email?: InputMaybe<StringWhereInput>;
   emailVerified?: InputMaybe<BooleanWhereInput>;
@@ -1389,7 +1396,7 @@ export type WithinInput = {
   box: BoxInput;
 };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, username?: string | null };
+export type UserFragmentFragment = { __typename?: 'User', id: string, username?: string | null, avatar?: string | null };
 
 export type SignInMutationVariables = Exact<{
   username: Scalars['String'];
@@ -1397,20 +1404,22 @@ export type SignInMutationVariables = Exact<{
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', logIn?: { __typename?: 'LogInPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null } } } | null };
+export type SignInMutation = { __typename?: 'Mutation', logIn?: { __typename?: 'LogInPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
 export type SignupMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
+  avatar?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null } } } | null };
+export type SignupMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
   username
+  avatar
 }
     `;
 export const SignInDoc = gql`
@@ -1426,8 +1435,10 @@ export const SignInDoc = gql`
 }
     ${UserFragmentFragmentDoc}`;
 export const SignupDoc = gql`
-    mutation signup($username: String!, $password: String!) {
-  signUp(input: {fields: {username: $username, password: $password}}) {
+    mutation signup($username: String!, $password: String!, $avatar: String) {
+  signUp(
+    input: {fields: {username: $username, password: $password, avatar: $avatar}}
+  ) {
     viewer {
       sessionToken
       user {
