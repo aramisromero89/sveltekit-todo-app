@@ -25,6 +25,8 @@
     "cookie": "^0.4.1",
     "graphql": "^16.3.0",
     "graphql-codegen-svelte-apollo": "^1.1.0",
-    "react": "^18.0.0"
+    "react": "^18.0.0",
+    "svelte-forms": "^2.3.1",
+    "sveltestrap": "^5.9.0"
   }
 }
