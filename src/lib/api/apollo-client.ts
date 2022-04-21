@@ -1,6 +1,6 @@
-import { ApolloClient, ApolloError, InMemoryCache } from '@apollo/client';
-import { createHttpLink } from '@apollo/client'
-import { setContext } from '@apollo/client/link/context';
+import { ApolloClient, ApolloError, InMemoryCache } from '@apollo/client/core/index.js';
+import { createHttpLink } from '@apollo/client/link/http/index.js'
+import { setContext } from '@apollo/client/link/context/index.js';
 
 const httpLink = createHttpLink({
     uri: import.meta.env.VITE_API_URL
@@ -37,3 +37,14 @@ const client = new ApolloClient({
 });
 
 export default client
+
+export type ApiResult<T> = {
+    error?: any
+    result?: T
+}
+
+export async function apiCall<T>(operation: any):Promise<ApiResult<T>>{
+    return new Promise((resolve) => {
+        operation.then(v => resolve({result:v.data})).catch(v => resolve({error:v.message}))      
+    })
+}
