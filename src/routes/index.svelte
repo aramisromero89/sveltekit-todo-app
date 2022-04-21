@@ -1,8 +1,12 @@
 <script lang="ts">
-import SignIn from "$lib/components/SignIn.svelte";
+import AuthGuard from "$lib/components/AuthGuard.svelte";
+import NavBar from "$lib/components/NavBar.svelte";
 
-  import SignUp from "$lib/components/SignUp.svelte";
+  import { user } from "$lib/services/auth-service"
  
 </script>
 
-<SignIn />
+<AuthGuard>  
+  <NavBar></NavBar>
+  <p>hello</p>
+</AuthGuard>

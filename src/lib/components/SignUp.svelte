@@ -9,6 +9,7 @@
   import { reqSignUp } from "$lib/services/auth-service";
   import Avatar from "./Avatar.svelte";
 import { showSnackbar } from "$lib/services/snackbar-service";
+import { goto } from "$app/navigation";
 
   const username = field("username", "", [required(), customValidator(min(4), $t("validation.min", { min: 4 }))]);
   const password = field("password", "", [required(), customValidator(min(8), $t("validation.min", { min: 8 }))]);
@@ -43,6 +44,9 @@ import { showSnackbar } from "$lib/services/snackbar-service";
       if(res.error){
         showSnackbar(res.error)
       }
+      else{
+        goto("/")
+      }
     }
   }
 </script>
@@ -60,7 +64,9 @@ import { showSnackbar } from "$lib/services/snackbar-service";
                 <Avatar onClick={() => fileInput.click()} width={100} src={imageBase64} text={$username.value} />
               </div>
               <small class="center">{$t("text.clickToSelect")}</small>
-              <Form>
+              <!-- svelte-ignore component-name-lowercase -->
+              <form autocomplete="off" on:submit|preventDefault={submit}>
+                <input type="submit" hidden />         
                 <FormGroup floating label={$t("user.username")}>
                   <Input
                     bind:value={$username.value}
@@ -95,7 +101,7 @@ import { showSnackbar } from "$lib/services/snackbar-service";
                     <Button disabled={!$pform.valid} on:click={submit} type="button" color="primary" style="margin: auto;">Sign-Up</Button>
                   {/if}
                 </div>
-              </Form>
+              </form>
             </CardBody>
           </Card>
         </Col>
