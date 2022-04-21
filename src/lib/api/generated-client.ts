@@ -1,6 +1,6 @@
 import client from "./apollo-client";
 import type {
-        MutationOptions
+        ApolloQueryResult, ObservableQuery, WatchQueryOptions, MutationOptions
       } from "@apollo/client";
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
@@ -1396,6 +1396,8 @@ export type WithinInput = {
   box: BoxInput;
 };
 
+export type TaskFragmentFragment = { __typename?: 'Task', id: string, text: string };
+
 export type UserFragmentFragment = { __typename?: 'User', id: string, username?: string | null, avatar?: string | null };
 
 export type SignInMutationVariables = Exact<{
@@ -1406,6 +1408,11 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', logIn?: { __typename?: 'LogInPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
+export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SignOutMutation = { __typename?: 'Mutation', logOut?: { __typename?: 'LogOutPayload', ok: boolean } | null };
+
 export type SignUpMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -1415,6 +1422,17 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
+export type TaskListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TaskListQuery = { __typename?: 'Query', viewer: { __typename?: 'Viewer', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string } | null } | null> | null } } } };
+
+export const TaskFragmentFragmentDoc = gql`
+    fragment TaskFragment on Task {
+  id
+  text
+}
+    `;
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
@@ -1434,6 +1452,13 @@ export const SignInDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
+export const SignOutDoc = gql`
+    mutation signOut {
+  logOut(input: {}) {
+    ok
+  }
+}
+    `;
 export const SignUpDoc = gql`
     mutation signUp($username: String!, $password: String!, $avatar: String) {
   signUp(
@@ -1448,6 +1473,21 @@ export const SignUpDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
+export const TaskListDoc = gql`
+    query taskList {
+  viewer {
+    user {
+      tasks {
+        edges {
+          node {
+            ...TaskFragment
+          }
+        }
+      }
+    }
+  }
+}
+    ${TaskFragmentFragmentDoc}`;
 export const signIn = (
             options: Omit<
               MutationOptions<any, SignInMutationVariables>, 
@@ -1456,6 +1496,18 @@ export const signIn = (
           ) => {
             const m = client.mutate<SignInMutation, SignInMutationVariables>({
               mutation: SignInDoc,
+              ...options,
+            });
+            return m;
+          }
+export const signOut = (
+            options: Omit<
+              MutationOptions<any, SignOutMutationVariables>, 
+              "mutation"
+            >
+          ) => {
+            const m = client.mutate<SignOutMutation, SignOutMutationVariables>({
+              mutation: SignOutDoc,
               ...options,
             });
             return m;
@@ -1472,3 +1524,38 @@ export const signUp = (
             });
             return m;
           }
+export const taskList = (
+            options: Omit<
+              WatchQueryOptions<TaskListQueryVariables>, 
+              "query"
+            >
+          ): Readable<
+            ApolloQueryResult<TaskListQuery> & {
+              query: ObservableQuery<
+                TaskListQuery,
+                TaskListQueryVariables
+              >;
+            }
+          > => {
+            const q = client.watchQuery({
+              query: TaskListDoc,
+              ...options,
+            });
+            var result = readable<
+              ApolloQueryResult<TaskListQuery> & {
+                query: ObservableQuery<
+                  TaskListQuery,
+                  TaskListQueryVariables
+                >;
+              }
+            >(
+              { data: {} as any, loading: true, error: undefined, networkStatus: 1, query: q },
+              (set) => {
+                q.subscribe((v: any) => {
+                  set({ ...v, query: q });
+                });
+              }
+            );
+            return result;
+          }
+        

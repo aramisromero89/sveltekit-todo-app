@@ -1,0 +1,5 @@
+mutation signOut{
+  logOut(input:{}){
+    ok
+  }
+}
