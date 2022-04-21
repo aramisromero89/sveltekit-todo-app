@@ -12,7 +12,8 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
-    "svelte": "^3.46.0"
+    "svelte": "^3.46.0",
+    "svelte-feather-icons": "^4.0.0"
   },
   "type": "module",
   "dependencies": {

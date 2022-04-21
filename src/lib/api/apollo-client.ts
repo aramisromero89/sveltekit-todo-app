@@ -43,13 +43,8 @@ export type ApiResult<T> = {
     result?: T
 }
 
-export enum ApiOperationType {
-    MUTATION,
-    QUERY
-}
-
 export async function apiCall<T>(operation: any):Promise<ApiResult<T>>{
     return new Promise((resolve) => {
-        operation.then(v => resolve({result:v})).catch(v => resolve({error:v.message}))      
+        operation.then(v => resolve({result:v.data})).catch(v => resolve({error:v.message}))      
     })
 }
