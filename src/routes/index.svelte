@@ -1,12 +1,11 @@
 <script lang="ts">
 import AuthGuard from "$lib/components/AuthGuard.svelte";
 import NavBar from "$lib/components/NavBar.svelte";
+import TaskList from "$lib/components/task/TaskList.svelte";
 
-  import { user } from "$lib/services/auth-service"
- 
 </script>
 
 <AuthGuard>  
   <NavBar></NavBar>
-  <p>hello</p>
+  <TaskList></TaskList>
 </AuthGuard>
