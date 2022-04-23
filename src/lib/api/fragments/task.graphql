@@ -1,0 +1,4 @@
+fragment TaskFragment on Task{
+    id
+    text
+}

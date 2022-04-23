@@ -8,8 +8,7 @@
   import { t } from "$lib/i18n/translation";
   import { reqSignUp } from "$lib/services/auth-service";
   import Avatar from "./Avatar.svelte";
-import { showSnackbar } from "$lib/services/snackbar-service";
-import { goto } from "$app/navigation";
+  import { goto } from "$app/navigation";
 
   const username = field("username", "", [required(), customValidator(min(4), $t("validation.min", { min: 4 }))]);
   const password = field("password", "", [required(), customValidator(min(8), $t("validation.min", { min: 8 }))]);
@@ -35,17 +34,14 @@ import { goto } from "$app/navigation";
     };
   };
 
-  async function submit() {    
+  async function submit() {
     await pform.validate();
     if ($pform.valid) {
       sending = true;
       let res = await reqSignUp($username.value, $password.value, imageBase64);
       sending = false;
-      if(res.error){
-        showSnackbar(res.error)
-      }
-      else{
-        goto("/")
+      if (!res.error) {
+        goto("/");
       }
     }
   }
@@ -66,7 +62,7 @@ import { goto } from "$app/navigation";
               <small class="center">{$t("text.clickToSelect")}</small>
               <!-- svelte-ignore component-name-lowercase -->
               <form autocomplete="off" on:submit|preventDefault={submit}>
-                <input type="submit" hidden />         
+                <input type="submit" hidden />
                 <FormGroup floating label={$t("user.username")}>
                   <Input
                     bind:value={$username.value}

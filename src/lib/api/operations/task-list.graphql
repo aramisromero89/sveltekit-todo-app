@@ -1,0 +1,13 @@
+query taskList {
+  viewer {
+    user {
+      tasks {
+        edges {
+          node {
+            ...TaskFragment
+          }
+        }
+      }
+    }
+  }
+}

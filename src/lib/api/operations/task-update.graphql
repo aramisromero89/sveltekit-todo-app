@@ -1,0 +1,7 @@
+mutation taskUpdate($taskId: ID!, $text: String!) {
+  updateTask(input: { id: $taskId, fields: { text: $text } }) {
+    task {
+      ...TaskFragment
+    }
+  }
+}

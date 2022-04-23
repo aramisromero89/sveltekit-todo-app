@@ -16,7 +16,7 @@ https://github.com/IQAndreas/markdown-licenses/blob/master/mit.md
   let avatarImage;
   let initialized = false;
 
-  $: if(initialized) avatarImage.src = src !== "" ? src : LetterAvatar(text, width)
+  $: if(initialized) avatarImage.src = src ? src : LetterAvatar(text, width)
 
   onMount(()=>{
       initialized = true    

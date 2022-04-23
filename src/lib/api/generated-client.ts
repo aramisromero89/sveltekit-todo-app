@@ -1422,10 +1422,33 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp?: { __typename?: 'SignUpPayload', viewer: { __typename?: 'Viewer', sessionToken: string, user: { __typename?: 'User', id: string, username?: string | null, avatar?: string | null } } } | null };
 
+export type TaskCreateMutationVariables = Exact<{
+  userId: Scalars['ID'];
+  text: Scalars['String'];
+}>;
+
+
+export type TaskCreateMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string } | null } | null> | null } } } | null };
+
+export type TaskDeleteMutationVariables = Exact<{
+  taskId: Scalars['ID'];
+}>;
+
+
+export type TaskDeleteMutation = { __typename?: 'Mutation', deleteTask?: { __typename?: 'DeleteTaskPayload', task: { __typename?: 'Task', id: string, text: string } } | null };
+
 export type TaskListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TaskListQuery = { __typename?: 'Query', viewer: { __typename?: 'Viewer', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string } | null } | null> | null } } } };
+
+export type TaskUpdateMutationVariables = Exact<{
+  taskId: Scalars['ID'];
+  text: Scalars['String'];
+}>;
+
+
+export type TaskUpdateMutation = { __typename?: 'Mutation', updateTask?: { __typename?: 'UpdateTaskPayload', task: { __typename?: 'Task', id: string, text: string } } | null };
 
 export const TaskFragmentFragmentDoc = gql`
     fragment TaskFragment on Task {
@@ -1473,6 +1496,32 @@ export const SignUpDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
+export const TaskCreateDoc = gql`
+    mutation taskCreate($userId: ID!, $text: String!) {
+  updateUser(
+    input: {id: $userId, fields: {tasks: {createAndAdd: [{text: $text}]}}}
+  ) {
+    user {
+      tasks {
+        edges {
+          node {
+            ...TaskFragment
+          }
+        }
+      }
+    }
+  }
+}
+    ${TaskFragmentFragmentDoc}`;
+export const TaskDeleteDoc = gql`
+    mutation taskDelete($taskId: ID!) {
+  deleteTask(input: {id: $taskId}) {
+    task {
+      ...TaskFragment
+    }
+  }
+}
+    ${TaskFragmentFragmentDoc}`;
 export const TaskListDoc = gql`
     query taskList {
   viewer {
@@ -1484,6 +1533,15 @@ export const TaskListDoc = gql`
           }
         }
       }
+    }
+  }
+}
+    ${TaskFragmentFragmentDoc}`;
+export const TaskUpdateDoc = gql`
+    mutation taskUpdate($taskId: ID!, $text: String!) {
+  updateTask(input: {id: $taskId, fields: {text: $text}}) {
+    task {
+      ...TaskFragment
     }
   }
 }
@@ -1524,6 +1582,30 @@ export const signUp = (
             });
             return m;
           }
+export const taskCreate = (
+            options: Omit<
+              MutationOptions<any, TaskCreateMutationVariables>, 
+              "mutation"
+            >
+          ) => {
+            const m = client.mutate<TaskCreateMutation, TaskCreateMutationVariables>({
+              mutation: TaskCreateDoc,
+              ...options,
+            });
+            return m;
+          }
+export const taskDelete = (
+            options: Omit<
+              MutationOptions<any, TaskDeleteMutationVariables>, 
+              "mutation"
+            >
+          ) => {
+            const m = client.mutate<TaskDeleteMutation, TaskDeleteMutationVariables>({
+              mutation: TaskDeleteDoc,
+              ...options,
+            });
+            return m;
+          }
 export const taskList = (
             options: Omit<
               WatchQueryOptions<TaskListQueryVariables>, 
@@ -1559,3 +1641,15 @@ export const taskList = (
             return result;
           }
         
+export const taskUpdate = (
+            options: Omit<
+              MutationOptions<any, TaskUpdateMutationVariables>, 
+              "mutation"
+            >
+          ) => {
+            const m = client.mutate<TaskUpdateMutation, TaskUpdateMutationVariables>({
+              mutation: TaskUpdateDoc,
+              ...options,
+            });
+            return m;
+          }
