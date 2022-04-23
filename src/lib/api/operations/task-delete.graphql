@@ -1,0 +1,7 @@
+mutation taskDelete($taskId: ID!) {
+  deleteTask(input: { id: $taskId }) {
+    task {
+      ...TaskFragment
+    }
+  }
+}

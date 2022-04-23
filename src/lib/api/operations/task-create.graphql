@@ -1,0 +1,13 @@
+mutation taskCreate($userId: ID!, $text: String!) {
+  updateUser(input: { id: $userId, fields: { tasks: { createAndAdd: [{ text: $text }] } } }) {
+    user {
+      tasks {
+        edges {
+          node {
+            ...TaskFragment
+          }
+        }
+      }
+    }
+  }
+}
