@@ -1,6 +1,9 @@
 import { ApolloClient, ApolloError, InMemoryCache } from '@apollo/client/core/index.js';
 import { createHttpLink } from '@apollo/client/link/http/index.js'
 import { setContext } from '@apollo/client/link/context/index.js';
+import { showSnackbar } from '../services/snackbar-service';
+import { user } from "../services/auth-service"
+import { get } from 'svelte/store';
 
 const httpLink = createHttpLink({
     uri: import.meta.env.VITE_API_URL
@@ -8,7 +11,8 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
-    let sessionToken = ""
+    let authUser = get(user)    
+    let sessionToken = authUser ? authUser.sessionToken : ""
     // return the headers to the context so httpLink can read them
     return {
         headers: {
@@ -26,7 +30,7 @@ const client = new ApolloClient({
         watchQuery: {
             fetchPolicy: "network-only",
             errorPolicy: "all"
-            
+
         },
         query: {
             fetchPolicy: "network-only",
@@ -43,8 +47,32 @@ export type ApiResult<T> = {
     result?: T
 }
 
-export async function apiCall<T>(operation: any):Promise<ApiResult<T>>{
-    return new Promise((resolve) => {
-        operation.then(v => resolve({result:v.data})).catch(v => resolve({error:v.message}))      
-    })
+export async function apiCall<T>(operation: any): Promise<ApiResult<T>> {
+
+    if (operation.then) {
+        return new Promise((resolve) => {
+            //check if operation is mutation
+            operation.then(v => resolve({ result: v.data })).catch(v => {
+                showSnackbar(v.message)
+                resolve({ error: v.message })
+            })
+        })
+    }
+    else {
+        let result = await operation
+        let outPromise = new Promise((resolve, reject) => {
+            result.subscribe(v => {
+                if (!v.loading) {
+                    if (v.errors)
+                        resolve({ error: v.errors[0].message })
+                    else{
+                        resolve({
+                            result: v.data
+                        })
+                    }
+                }
+            })
+        })
+        return outPromise
+    }
 }
