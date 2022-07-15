@@ -3,7 +3,9 @@ import { createHttpLink } from '@apollo/client/link/http/index.js'
 import { setContext } from '@apollo/client/link/context/index.js';
 import { showSnackbar } from '../services/snackbar-service';
 import { user } from "../services/auth-service"
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
+
+export const LOADING = writable<boolean>(false)
 
 const httpLink = createHttpLink({
     uri: import.meta.env.VITE_API_URL
@@ -11,7 +13,7 @@ const httpLink = createHttpLink({
 
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
-    let authUser = get(user)    
+    let authUser = get(user)
     let sessionToken = authUser ? authUser.sessionToken : ""
     // return the headers to the context so httpLink can read them
     return {
@@ -47,12 +49,17 @@ export type ApiResult<T> = {
     result?: T
 }
 
-export async function apiCall<T>(operation: any): Promise<ApiResult<T>> {
-
+export async function apiCall<T>(operation: any, showLoader = true): Promise<ApiResult<T>> {
+    if (showLoader)
+        LOADING.update((v) => true)
     if (operation.then) {
         return new Promise((resolve) => {
             //check if operation is mutation
-            operation.then(v => resolve({ result: v.data })).catch(v => {
+            operation.then(v => {
+                LOADING.update((v) => false)
+                resolve({ result: v.data })
+            }).catch(v => {
+                LOADING.update((v) => false)
                 showSnackbar(v.message)
                 resolve({ error: v.message })
             })
@@ -63,9 +70,10 @@ export async function apiCall<T>(operation: any): Promise<ApiResult<T>> {
         let outPromise = new Promise((resolve, reject) => {
             result.subscribe(v => {
                 if (!v.loading) {
+                    LOADING.update((v) => false)
                     if (v.errors)
                         resolve({ error: v.errors[0].message })
-                    else{
+                    else {
                         resolve({
                             result: v.data
                         })

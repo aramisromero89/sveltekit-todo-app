@@ -23,7 +23,8 @@ export async function reqSignIn(username: string, password: string) {
         variables: {
             username: username,
             password: password        }
-    }))
+    }),
+    false)
 
     if(!res.error){       
         let data = res.result.logIn.viewer
@@ -51,6 +52,6 @@ export function reqSignUp(username: string, password: string, avatar?: string) {
             password: password,
             avatar: avatar
         }
-    }))
+    }),false)
 }
 
