@@ -3,8 +3,15 @@
   import { isEmpty } from "lodash-es";
   import Avatar from "../Avatar.svelte";
   import { user } from "$lib/services/auth-service";
-  import { SaveIcon, PlusIcon, XIcon } from "svelte-feather-icons";
-  import { cancelEdition, reqTaskCreate, reqTaskUpdate, creatingTask, createTask } from "$lib/services/task-service";
+  import { SaveIcon, PlusIcon, XIcon, Trash2Icon } from "svelte-feather-icons";
+  import {
+    cancelEdition,
+    reqTaskCreate,
+    reqTaskUpdate,
+    creatingTask,
+    createTask,
+reqTaskDelete,
+  } from "$lib/services/task-service";
 
   let okAction = "add"; //:"add"|"update"|"cancel"
 
@@ -34,6 +41,10 @@
     }
   }
 
+  function deleteTask(){
+    reqTaskDelete(taskId);
+  }
+
   async function handleOK() {
     if (okAction == "cancel") {
       handleCancel();
@@ -42,27 +53,47 @@
     } else {
       await reqTaskCreate(value);
     }
-    value=""
+    value = "";
   }
 </script>
 
 <div class="container">
   <div class={showCard ? "card-task" : ""}>
-    <div class="editor" style={showCard ? "border-bottom: 1px solid #ddd;" : ""}>
+    <div
+      class="editor"
+      style={showCard ? "border-bottom: 1px solid #ddd;" : ""}
+    >
       <div>
         <FeatherIcon icon="plus-square" color="#007FFF" />
       </div>
-      <input placeholder={isCreator ? "Type to add new task" : ""} on:focus={handleInputFocus} bind:value class="input-text" />
+      <input
+        placeholder={isCreator ? "Type to add new task" : ""}
+        on:focus={handleInputFocus}
+        bind:value
+        class="input-text"
+      />
       {#if showCard}
-        <span style={okAction == "cancel" ? "opacity:0.5;":""}><Avatar width={24} text={$user.username} src={$user.avatar} /></span>
+        <span style={okAction == "cancel" ? "opacity:0.5;" : ""}
+          ><Avatar width={24} text={$user.username} src={$user.avatar} /></span
+        >
       {/if}
     </div>
 
     {#if showCard}
       <div class="buttons-container row">
-        <div class="col option-buttons" />
+        <div class="col option-buttons">
+          <div class="btn btn-secondary" on:click={deleteTask}>
+            <Trash2Icon />
+          </div>
+        </div>
         <div class="col action-buttons">
-          <div class="btn btn-cancel" on:click={handleCancel} style="background-color: #ccc;margin-right: 10px;">Cancel</div>
+          <div
+            class="btn btn-cancel"
+            on:click={handleCancel}
+            style="background-color: #ccc;margin-right: 10px;"
+          >
+            Cancel
+          </div>
           <div class="btn btn-primary" on:click={handleOK}>
             <span class="span-ok-icon">
               {#if okAction == "cancel"}
