@@ -10,7 +10,7 @@
     reqTaskUpdate,
     creatingTask,
     createTask,
-reqTaskDelete,
+    reqTaskDelete,
   } from "$lib/services/task-service";
 
   let okAction = "add"; //:"add"|"update"|"cancel"
@@ -41,7 +41,7 @@ reqTaskDelete,
     }
   }
 
-  function deleteTask(){
+  function deleteTask() {
     reqTaskDelete(taskId);
   }
 
@@ -57,59 +57,54 @@ reqTaskDelete,
   }
 </script>
 
-<div class="container">
-  <div class={showCard ? "card-task" : ""}>
-    <div
-      class="editor"
-      style={showCard ? "border-bottom: 1px solid #ddd;" : ""}
-    >
-      <div>
-        <FeatherIcon icon="plus-square" color="#007FFF" />
-      </div>
-      <input
-        placeholder={isCreator ? "Type to add new task" : ""}
-        on:focus={handleInputFocus}
-        bind:value
-        class="input-text"
-      />
-      {#if showCard}
-        <span style={okAction == "cancel" ? "opacity:0.5;" : ""}
-          ><Avatar width={24} text={$user.username} src={$user.avatar} /></span
-        >
-      {/if}
+<div class={showCard ? "card-task" : ""}>
+  <div class="editor" style={showCard ? "border-bottom: 1px solid #ddd;" : ""}>
+    <div>
+      <FeatherIcon icon="plus-square" color="#007FFF" />
     </div>
-
+    <input
+      placeholder={isCreator ? "Type to add new task" : ""}
+      on:focus={handleInputFocus}
+      bind:value
+      class="input-text"
+    />
     {#if showCard}
-      <div class="buttons-container row">
-        <div class="col option-buttons">
-          <div class="btn btn-secondary" on:click={deleteTask}>
-            <Trash2Icon />
-          </div>
-        </div>
-        <div class="col action-buttons">
-          <div
-            class="btn btn-cancel"
-            on:click={handleCancel}
-            style="background-color: #ccc;margin-right: 10px;"
-          >
-            Cancel
-          </div>
-          <div class="btn btn-primary" on:click={handleOK}>
-            <span class="span-ok-icon">
-              {#if okAction == "cancel"}
-                <XIcon />
-              {:else if okAction == "update"}
-                <SaveIcon />
-              {:else}
-                <PlusIcon />
-              {/if}
-            </span>
-            <span class="span-ok">Ok</span>
-          </div>
-        </div>
-      </div>
+      <span style={okAction == "cancel" ? "opacity:0.5;" : ""}
+        ><Avatar width={24} text={$user.username} src={$user.avatar} /></span
+      >
     {/if}
   </div>
+
+  {#if showCard}
+    <div class="buttons-container row">
+      <div class="col option-buttons">
+        <div class="btn btn-secondary" on:click={deleteTask}>
+          <Trash2Icon />
+        </div>
+      </div>
+      <div class="col action-buttons">
+        <div
+          class="btn btn-cancel"
+          on:click={handleCancel}
+          style="background-color: #ccc;margin-right: 10px;"
+        >
+          Cancel
+        </div>
+        <div class="btn btn-primary" on:click={handleOK}>
+          <span class="span-ok-icon">
+            {#if okAction == "cancel"}
+              <XIcon />
+            {:else if okAction == "update"}
+              <SaveIcon />
+            {:else}
+              <PlusIcon />
+            {/if}
+          </span>
+          <span class="span-ok">Ok</span>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
