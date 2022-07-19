@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { reqTaskList, tasks, creatingTask, editingTaskId } from "$lib/services/task-service";
+  import {
+    reqTaskList,
+    tasks,
+    creatingTask,
+    editingTaskId,
+  } from "$lib/services/task-service";
+  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import TaskEdit from "./TaskEdit.svelte";
   import TaskListItem from "./TaskListItem.svelte";
@@ -11,21 +17,26 @@
 
 <div class="container">
   <row class="row">
-    <TaskEdit  isCreator={true} />
-  </row>  
+    <TaskEdit isCreator={true} />
+  </row>
   {#each $tasks as task}
     <div class="row" style="margin-top: 20px;">
       {#if $editingTaskId == task.id}
+      <div in:fade>
         <TaskEdit taskId={task.id} value={task.text} />
+      </div>
+        
       {:else}
-        <TaskListItem taskId={task.id} value={task.text} />
+        <div in:fade>
+          <TaskListItem taskId={task.id} value={task.text} />
+        </div>
       {/if}
     </div>
   {/each}
 </div>
 
-<style>
-  .container{
+<style> 
+  .container {
     margin-top: 20px;
   }
 </style>
