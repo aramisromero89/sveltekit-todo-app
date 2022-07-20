@@ -6,6 +6,7 @@ import { taskCreate, taskList, type TaskListQuery, type TaskCreateMutation, task
 export type Task = {
     id: string
     text: string
+    done?: boolean
 }
 
 const _editingTaskId = writable<string>()
@@ -46,7 +47,8 @@ export async function reqTaskList() {
         let tasks: Task[] = res.result.viewer.user.tasks.edges.map(v => {
             return {
                 id: v.node.id,
-                text: v.node.text
+                text: v.node.text,
+                done: v.node.done
             }
 
         })
@@ -68,7 +70,8 @@ export async function reqTaskCreate(text: string) {
         let tasks: Task[] = res.result.updateUser.user.tasks.edges.map(v => {
             return {
                 id: v.node.id,
-                text: v.node.text
+                text: v.node.text,
+                done: v.node.done
             }
 
         })
@@ -78,11 +81,12 @@ export async function reqTaskCreate(text: string) {
     }
 }
 
-export async function reqTaskUpdate(taskId: string, text: string) {
+export async function reqTaskUpdate(taskId: string, text: string,done?:boolean) {
     let res = await apiCall<TaskUpdateMutation>(taskUpdate({
         variables: {
             taskId: taskId,
-            text: text
+            text: text,
+            done: done
         }
     }))
 
@@ -93,7 +97,8 @@ export async function reqTaskUpdate(taskId: string, text: string) {
             if (v.id == taskId) {
                 return {
                     id: taskData.id,
-                    text: taskData.text
+                    text: taskData.text,
+                    done: taskData.done
                 }
             } else {
                 return { ...v }

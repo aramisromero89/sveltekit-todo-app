@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { editTask } from "$lib/services/task-service";
+  import { editTask, reqTaskUpdate } from "$lib/services/task-service";
   import { onMount } from "svelte";
-  import { SquareIcon } from "svelte-feather-icons";
+  import { SquareIcon, CheckSquareIcon } from "svelte-feather-icons";
   export let taskId;
   export let value;
+  export let done;
   let transformed;
 
   $: {
@@ -16,11 +17,18 @@
     editTask(taskId);
   }
 
+  function toggleDone() {
+    let pdone = done==true
+    pdone = !pdone
+    console.log(`toggle task: ${pdone}`);
+    reqTaskUpdate(taskId, value, pdone);
+  }
+
   function transform() {
     transformed = value;
     replaceEmails();
     replaceUsers();
-   
+
     replaceLinks();
     replaceTags();
   }
@@ -42,13 +50,19 @@
 
   function replaceUsers() {
     replace(/(@[a-z0-9]*)/, (t) => {
-      return ` <span class="userTag"><svg style="margin-bottom:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hash"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>${t.replace("@", "")}</span> `;
+      return ` <span class="userTag"><svg style="margin-bottom:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hash"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>${t.replace(
+        "@",
+        ""
+      )}</span> `;
     });
   }
 
   function replaceTags() {
     replace(/(#[a-z0-9]*)/, (t) => {
-      return ` <span class="tagTag"><svg style="margin-bottom:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hash"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>${t.replace("#", "")}</span> `;
+      return ` <span class="tagTag"><svg style="margin-bottom:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hash"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>${t.replace(
+        "#",
+        ""
+      )}</span> `;
     });
   }
 
@@ -65,12 +79,20 @@
   }
 
   onMount(() => {
+    console.log(done)
     transform();
   });
 </script>
 
-<div style="margin-left: 10px;" on:click={handleCLick}>
-  <SquareIcon />&nbsp;{@html transformed}
+<div style="margin-left: 10px;">
+  <span on:click={toggleDone}>
+    {#if done}
+      <CheckSquareIcon />
+    {:else}
+      <SquareIcon />
+    {/if}
+  </span>
+  <span>&nbsp;<span on:click={handleCLick}>{@html transformed}</span> </span>
 </div>
 
 <style>

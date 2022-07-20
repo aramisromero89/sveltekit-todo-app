@@ -280,6 +280,9 @@ input CreateTaskFieldsInput {
 
   # This is the object text.
   text: String!
+
+  # This is the object done.
+  done: Boolean
 }
 
 input CreateTaskInput {
@@ -313,11 +316,11 @@ input CreateUserFieldsInput {
   # This is the object authData.
   authData: Object
 
-  # This is the object tasks.
-  tasks: TaskRelationInput
-
   # This is the object avatar.
   avatar: String
+
+  # This is the object tasks.
+  tasks: TaskRelationInput
 }
 
 input CreateUserInput {
@@ -1780,6 +1783,9 @@ type Task implements ParseObject & Node {
 
   # This is the object text.
   text: String!
+
+  # This is the object done.
+  done: Boolean
 }
 
 # A connection to a list of items.
@@ -1815,6 +1821,8 @@ enum TaskOrder {
   ACL_DESC
   text_ASC
   text_DESC
+  done_ASC
+  done_DESC
   id_ASC
   id_DESC
 }
@@ -1868,6 +1876,9 @@ input TaskWhereInput {
 
   # This is the object text.
   text: StringWhereInput
+
+  # This is the object done.
+  done: BooleanWhereInput
 
   # This is the object id.
   id: IdWhereInput
@@ -1976,6 +1987,9 @@ input UpdateTaskFieldsInput {
 
   # This is the object text.
   text: String
+
+  # This is the object done.
+  done: Boolean
 }
 
 input UpdateTaskInput {
@@ -2012,11 +2026,11 @@ input UpdateUserFieldsInput {
   # This is the object authData.
   authData: Object
 
-  # This is the object tasks.
-  tasks: TaskRelationInput
-
   # This is the object avatar.
   avatar: String
+
+  # This is the object tasks.
+  tasks: TaskRelationInput
 }
 
 input UpdateUserInput {
@@ -2064,6 +2078,9 @@ type User implements ParseObject & Node {
   # This is the object authData.
   authData: Object
 
+  # This is the object avatar.
+  avatar: String
+
   # This is the object tasks.
   tasks(
     # These are the conditions that the objects need to match in order to be found.
@@ -2082,9 +2099,6 @@ type User implements ParseObject & Node {
     # The read options for the query to be executed.
     options: ReadOptionsInput
   ): TaskConnection!
-
-  # This is the object avatar.
-  avatar: String
 }
 
 # Allow to manage users in ACL. If read and write are null the users have read and write rights.
@@ -2141,11 +2155,11 @@ input UserLoginWithInput {
   # This is the object emailVerified.
   emailVerified: Boolean
 
-  # This is the object tasks.
-  tasks: TaskRelationInput
-
   # This is the object avatar.
   avatar: String
+
+  # This is the object tasks.
+  tasks: TaskRelationInput
 }
 
 # The UserOrder input type is used when sorting objects of the User class.
@@ -2168,10 +2182,10 @@ enum UserOrder {
   emailVerified_DESC
   authData_ASC
   authData_DESC
-  tasks_ASC
-  tasks_DESC
   avatar_ASC
   avatar_DESC
+  tasks_ASC
+  tasks_DESC
   id_ASC
   id_DESC
 }
@@ -2238,11 +2252,11 @@ input UserWhereInput {
   # This is the object authData.
   authData: ObjectWhereInput
 
-  # This is the object tasks.
-  tasks: TaskRelationWhereInput
-
   # This is the object avatar.
   avatar: StringWhereInput
+
+  # This is the object tasks.
+  tasks: TaskRelationWhereInput
 
   # This is the object id.
   id: IdWhereInput

@@ -1,4 +1,5 @@
 fragment TaskFragment on Task{
     id
     text
+    done
 }

@@ -158,6 +158,7 @@ export type CreateSessionPayload = {
 
 export type CreateTaskFieldsInput = {
   ACL?: InputMaybe<AclInput>;
+  done?: InputMaybe<Scalars['Boolean']>;
   text: Scalars['String'];
 };
 
@@ -1103,6 +1104,7 @@ export type Task = Node & ParseObject & {
   __typename?: 'Task';
   ACL: Acl;
   createdAt: Scalars['Date'];
+  done?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
   objectId: Scalars['ID'];
   text: Scalars['String'];
@@ -1127,6 +1129,8 @@ export enum TaskOrder {
   AclDesc = 'ACL_DESC',
   CreatedAtAsc = 'createdAt_ASC',
   CreatedAtDesc = 'createdAt_DESC',
+  DoneAsc = 'done_ASC',
+  DoneDesc = 'done_DESC',
   IdAsc = 'id_ASC',
   IdDesc = 'id_DESC',
   ObjectIdAsc = 'objectId_ASC',
@@ -1160,6 +1164,7 @@ export type TaskWhereInput = {
   NOR?: InputMaybe<Array<TaskWhereInput>>;
   OR?: InputMaybe<Array<TaskWhereInput>>;
   createdAt?: InputMaybe<DateWhereInput>;
+  done?: InputMaybe<BooleanWhereInput>;
   id?: InputMaybe<IdWhereInput>;
   objectId?: InputMaybe<IdWhereInput>;
   text?: InputMaybe<StringWhereInput>;
@@ -1225,6 +1230,7 @@ export type UpdateSessionPayload = {
 
 export type UpdateTaskFieldsInput = {
   ACL?: InputMaybe<AclInput>;
+  done?: InputMaybe<Scalars['Boolean']>;
   text?: InputMaybe<Scalars['String']>;
 };
 
@@ -1396,7 +1402,7 @@ export type WithinInput = {
   box: BoxInput;
 };
 
-export type TaskFragmentFragment = { __typename?: 'Task', id: string, text: string };
+export type TaskFragmentFragment = { __typename?: 'Task', id: string, text: string, done?: boolean | null };
 
 export type UserFragmentFragment = { __typename?: 'User', id: string, username?: string | null, avatar?: string | null };
 
@@ -1428,32 +1434,34 @@ export type TaskCreateMutationVariables = Exact<{
 }>;
 
 
-export type TaskCreateMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string } | null } | null> | null } } } | null };
+export type TaskCreateMutation = { __typename?: 'Mutation', updateUser?: { __typename?: 'UpdateUserPayload', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string, done?: boolean | null } | null } | null> | null } } } | null };
 
 export type TaskDeleteMutationVariables = Exact<{
   taskId: Scalars['ID'];
 }>;
 
 
-export type TaskDeleteMutation = { __typename?: 'Mutation', deleteTask?: { __typename?: 'DeleteTaskPayload', task: { __typename?: 'Task', id: string, text: string } } | null };
+export type TaskDeleteMutation = { __typename?: 'Mutation', deleteTask?: { __typename?: 'DeleteTaskPayload', task: { __typename?: 'Task', id: string, text: string, done?: boolean | null } } | null };
 
 export type TaskListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TaskListQuery = { __typename?: 'Query', viewer: { __typename?: 'Viewer', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string } | null } | null> | null } } } };
+export type TaskListQuery = { __typename?: 'Query', viewer: { __typename?: 'Viewer', user: { __typename?: 'User', tasks: { __typename?: 'TaskConnection', edges?: Array<{ __typename?: 'TaskEdge', node?: { __typename?: 'Task', id: string, text: string, done?: boolean | null } | null } | null> | null } } } };
 
 export type TaskUpdateMutationVariables = Exact<{
   taskId: Scalars['ID'];
   text: Scalars['String'];
+  done?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type TaskUpdateMutation = { __typename?: 'Mutation', updateTask?: { __typename?: 'UpdateTaskPayload', task: { __typename?: 'Task', id: string, text: string } } | null };
+export type TaskUpdateMutation = { __typename?: 'Mutation', updateTask?: { __typename?: 'UpdateTaskPayload', task: { __typename?: 'Task', id: string, text: string, done?: boolean | null } } | null };
 
 export const TaskFragmentFragmentDoc = gql`
     fragment TaskFragment on Task {
   id
   text
+  done
 }
     `;
 export const UserFragmentFragmentDoc = gql`
@@ -1538,8 +1546,8 @@ export const TaskListDoc = gql`
 }
     ${TaskFragmentFragmentDoc}`;
 export const TaskUpdateDoc = gql`
-    mutation taskUpdate($taskId: ID!, $text: String!) {
-  updateTask(input: {id: $taskId, fields: {text: $text}}) {
+    mutation taskUpdate($taskId: ID!, $text: String!, $done: Boolean) {
+  updateTask(input: {id: $taskId, fields: {text: $text, done: $done}}) {
     task {
       ...TaskFragment
     }

@@ -23,12 +23,12 @@
     <div class="row" style="margin-top: 20px;">
       {#if $editingTaskId == task.id}
       <div in:fade>
-        <TaskEdit taskId={task.id} value={task.text} />
+        <TaskEdit taskId={task.id} value={task.text}/>
       </div>
         
       {:else}
         <div in:fade>
-          <TaskListItem taskId={task.id} value={task.text} />
+          <TaskListItem taskId={task.id} value={task.text} done={task.done}/>
         </div>
       {/if}
     </div>
